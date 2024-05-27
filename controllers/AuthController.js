@@ -90,3 +90,16 @@ export const logout = async (req, res) => {
         res.status(500).json({ msg: error.message });
     }
 };
+
+export const getCurrentUser = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const user = await UserModel.findByPk(userId, {
+            attributes: ['id', 'name', 'email', 'role'],
+        });
+        if (!user) return res.status(404).json({ msg: 'User not found' });
+        res.json(user);
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};

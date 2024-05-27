@@ -2,24 +2,33 @@ import { DataTypes } from 'sequelize';
 import sequelize from '../config/Database.js';
 import UserModel from './UserModel.js';
 
-const CarModel = sequelize.define(
-    'Car',
-    {
-        name: { type: DataTypes.STRING, allowNull: false },
-        price: { type: DataTypes.FLOAT, allowNull: false },
-        size: { type: DataTypes.STRING, allowNull: false },
-        img: { type: DataTypes.STRING, allowNull: false },
-        userId: { type: DataTypes.INTEGER, allowNull: false },
-        createdBy: { type: DataTypes.INTEGER, allowNull: false },
-        updatedBy: { type: DataTypes.INTEGER },
-        deletedBy: { type: DataTypes.INTEGER },
+const Car = sequelize.define('Car', {
+    uuid: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        allowNull: false,
+        primaryKey: true,
     },
-    {
-        timestamps: true,
-        paranoid: true,
-    }
-);
+    model: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    rentPerDay: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+    },
+    images: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    is_deleted: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+    },
+});
 
-CarModel.belongsTo(UserModel, { foreignKey: 'userId' });
+Car.belongsTo(UserModel, { as: 'createdByUser', foreignKey: 'createdBy' });
+Car.belongsTo(UserModel, { as: 'updatedByUser', foreignKey: 'updatedBy' });
+Car.belongsTo(UserModel, { as: 'deletedByUser', foreignKey: 'deletedBy' });
 
-export default CarModel;
+export default Car;

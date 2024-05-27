@@ -14,8 +14,8 @@ const upload = multer({ dest: 'public/uploads/' });
 
 router.get('/', verifyToken, getAllCars);
 router.get('/:id', verifyToken, getCarById);
-router.post('/', verifyToken, onlyAdmin, upload.single('img'), createCar);
-router.put('/:id', verifyToken, onlyAdmin, upload.single('img'), updateCar);
+router.post('/', verifyToken, onlyAdmin, upload.single('images'), createCar);
+router.put('/:id', verifyToken, onlyAdmin, upload.single('images'), updateCar);
 router.delete('/:id', verifyToken, onlyAdmin, deleteCar);
 
 export default router;

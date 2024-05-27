@@ -3,7 +3,13 @@ import UserModel from '../models/UserModel.js';
 
 export const getAllCars = async (req, res) => {
     try {
-        const cars = await CarModel.findAll();
+        const cars = await CarModel.findAll({
+            include: [
+                { model: UserModel, as: 'createdByUser' },
+                { model: UserModel, as: 'updatedByUser' },
+                { model: UserModel, as: 'deletedByUser' },
+            ],
+        });
         res.json(cars);
     } catch (error) {
         res.status(500).json({ msg: error.message });
@@ -12,7 +18,13 @@ export const getAllCars = async (req, res) => {
 
 export const getCarById = async (req, res) => {
     try {
-        const car = await CarModel.findOne({ where: { id: req.params.id } });
+        const car = await CarModel.findByPk(req.params.id, {
+            include: [
+                { model: UserModel, as: 'createdByUser' },
+                { model: UserModel, as: 'updatedByUser' },
+                { model: UserModel, as: 'deletedByUser' },
+            ],
+        });
         if (!car) return res.status(404).json({ msg: 'Car not found' });
         res.json(car);
     } catch (error) {
@@ -21,59 +33,70 @@ export const getCarById = async (req, res) => {
 };
 
 export const createCar = async (req, res) => {
-    const { name, price, size, userId } = req.body;
-    const img = req.file ? req.file.filename : null;
+    const { model, rentPerDay } = req.body;
+    const images = req.file ? req.file.filename : null;
+    const createdBy = req.user.id;
 
     try {
-        const user = await UserModel.findOne({ where: { id: userId } });
+        const user = await UserModel.findByPk(createdBy);
         if (!user) return res.status(404).json({ msg: 'User not found' });
 
-        await CarModel.create({
-            name,
-            price,
-            size,
-            img,
-            userId,
-            createdBy: userId,
+        const newCar = await CarModel.create({
+            model,
+            rentPerDay,
+            images,
+            createdBy,
         });
-        res.status(201).json({ msg: 'Car created' });
+        res.status(201).json(newCar);
     } catch (error) {
         res.status(500).json({ msg: error.message });
     }
 };
 
 export const updateCar = async (req, res) => {
-    const { name, price, size, userId } = req.body;
-    console.log(name);
-    const img = req.file ? req.file.filename : null;
+    const { model, rentPerDay } = req.body;
+    const images = req.file ? req.file.filename : null;
+    const updatedBy = req.user.id;
 
     try {
-        const car = await CarModel.findOne({ where: { id: req.params.id } });
+        const car = await CarModel.findByPk(req.params.id, {
+            include: [
+                { model: UserModel, as: 'createdByUser' },
+                { model: UserModel, as: 'updatedByUser' },
+                { model: UserModel, as: 'deletedByUser' },
+            ],
+        });
         if (!car) return res.status(404).json({ msg: 'Car not found' });
 
-        car.name = name || car.name;
-        car.price = price || car.price;
-        car.size = size || car.size;
-        if (img) {
-            car.img = img;
-        }
-        car.updatedBy = userId;
+        car.model = model || car.model;
+        car.rentPerDay = rentPerDay || car.rentPerDay;
+        car.images = images || car.images;
+        car.updatedBy = updatedBy;
 
         await car.save();
-        res.json({ msg: 'Car updated' });
+        car.reload();
+        res.json(car);
     } catch (error) {
         res.status(500).json({ msg: error.message });
     }
 };
 
 export const deleteCar = async (req, res) => {
-    const { userId } = req.body;
+    const deletedBy = req.user.id;
+
     try {
-        const car = await CarModel.findOne({ where: { id: req.params.id } });
+        const car = await CarModel.findByPk(req.params.id, {
+            include: [
+                { model: UserModel, as: 'createdByUser' },
+                { model: UserModel, as: 'updatedByUser' },
+                { model: UserModel, as: 'deletedByUser' },
+            ],
+        });
         if (!car) return res.status(404).json({ msg: 'Car not found' });
 
-        car.deletedBy = userId;
-        await car.destroy();
+        car.is_deleted = true;
+        car.deletedBy = deletedBy;
+        await car.save();
         res.json({ msg: 'Car deleted' });
     } catch (error) {
         res.status(500).json({ msg: error.message });
