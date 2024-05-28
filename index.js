@@ -22,7 +22,7 @@ app.use('/users', userRoutes);
 app.use('/cars', carRoutes);
 
 sequelize
-    .sync()
+    .sync({ alter: true })
     .then(() => {
         app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
     })
