@@ -74,7 +74,6 @@ export const updateCar = async (req, res) => {
         car.updatedBy = updatedBy;
 
         await car.save();
-        car.reload();
         res.json(car);
     } catch (error) {
         res.status(500).json({ msg: error.message });
