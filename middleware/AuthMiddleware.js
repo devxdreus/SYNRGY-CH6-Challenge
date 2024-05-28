@@ -21,3 +21,10 @@ export const onlyAdmin = (req, res, next) => {
     }
     next();
 };
+
+export const onlySuperAdmin = (req, res, next) => {
+    if (req.user.role !== 'superadmin') {
+        return res.sendStatus(403);
+    }
+    next();
+};

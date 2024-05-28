@@ -2,6 +2,7 @@ import UserModel from '../models/UserModel.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
+import { createUser } from './UserController.js';
 
 dotenv.config();
 
@@ -44,6 +45,11 @@ export const login = async (req, res) => {
     } catch (error) {
         res.status(500).json({ msg: error.message });
     }
+};
+
+export const register = async (req, res) => {
+    req.body.role = 'member';
+    await createUser(req, res);
 };
 
 export const refreshToken = async (req, res) => {
