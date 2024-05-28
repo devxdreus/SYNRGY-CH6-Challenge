@@ -10,7 +10,16 @@ import { verifyToken, onlyAdmin } from '../middleware/AuthMiddleware.js';
 import multer from 'multer';
 
 const router = express.Router();
-const upload = multer({ dest: 'public/uploads/' });
+// const upload = multer({ dest: 'public/uploads/' });
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'public/uploads/');
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.originalname);
+    },
+});
+const upload = multer({ storage: storage });
 
 router.get('/', verifyToken, getAllCars);
 router.get('/:id', verifyToken, getCarById);

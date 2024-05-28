@@ -14,7 +14,7 @@ const PORT = process.env.PORT || 5000;
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
-app.use('/public/uploads', express.static('public/uploads'));
+app.use('/uploads', express.static('public/uploads'));
 app.set('view engine', 'ejs');
 
 app.use('/auth', authRoutes);
