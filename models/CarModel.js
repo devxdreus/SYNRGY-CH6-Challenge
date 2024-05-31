@@ -39,8 +39,6 @@ const Car = sequelize.define(
     }
 );
 
-Car.images;
-
 Car.belongsTo(UserModel, { as: 'createdByUser', foreignKey: 'createdBy' });
 Car.belongsTo(UserModel, { as: 'updatedByUser', foreignKey: 'updatedBy' });
 Car.belongsTo(UserModel, { as: 'deletedByUser', foreignKey: 'deletedBy' });
