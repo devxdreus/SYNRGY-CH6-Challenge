@@ -21,9 +21,12 @@ app.use('/auth', authRoutes);
 app.use('/users', userRoutes);
 app.use('/cars', carRoutes);
 
-sequelize
-    .sync()
-    .then(() => {
-        app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-    })
-    .catch((err) => console.log('Failed to sync database:', err));
+// sequelize
+//     .sync()
+//     .then(() => {
+//         app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+//     })
+//     .catch((err) => console.log('Failed to sync database:', err));
+app.listen(PORT, () => {
+    console.log(`Server running on port localhost:${PORT}`);
+});
